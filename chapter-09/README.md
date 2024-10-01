@@ -136,8 +136,8 @@ Feel free to experiment by inserting new rows into Postgres and re-running the E
 docker-compose down
 ```
 
-#Установки
-##docker-compose.yml
+# Установки
+## docker-compose.yml
 Файл с контейнерами.
 
 - zookeeper на порту 2188.
@@ -159,13 +159,13 @@ schema-registry - схемы данных будем хранить здесь. 
 
 - elasticsearch - в него будем писать данные из базы.
 
-##Файл start.sh
+## Файл start.sh
 Стартуем docker-compose.
 
-##Файл stop.sh
+## Файл stop.sh
 Выключаем контейнеры docker-compose.
 
-##Установка коннекторов
+## Установка коннекторов
 Входим в контейнер ksqldb-server:
 
 ```docker-compose exec ksqldb-server /bin/bash```
@@ -237,13 +237,13 @@ elasticsearch-sink | SINK
 | ...
 | RUNNING (1/1 tasks RUNNING)
 ```
-##Дополнительные команды
-###ksqldb-cli
+## Дополнительные команды
+### ksqldb-cli
 - DESCRIBE CONNECTOR postgres-source; - подробности о коннекторе
 - SHOW CONNECTORS; - показать все коннекторы
 - DROP CONNECTOR postgres-source ; - удалить коннектор
 
-###ksqldb-server
+### ksqldb-server
 ``` docker-compose exec ksqldb-server /bin/bash
 ```
 - curl -XGET localhost:8083/connectors - получение списка коннекторов
@@ -252,7 +252,7 @@ elasticsearch-sink | SINK
 - curl -XGET -s localhost:8083/connectors/elasticsearch-sink/tasks/0/status - получение состояний задач
 - curl -XPOST -s localhost:8083/connectors/elasticsearch-sink/tasks/0/restart - перезапуск задачи
 
-###schema-registry
+### schema-registry
 ```docker-compose exec schema-registry /bin/bash
 ```
 - curl -XGET localhost:8081/subjects/ - получение схемы типов
@@ -261,7 +261,7 @@ elasticsearch-sink | SINK
 - curl -XGET localhost:8081/subjects/titles-value/versions/1 - получение схемы с указанной версией
 - curl -XGET localhost:8081/subjects/titles-value/versions/latest - схемы последней версии
 
-#Упражнения из книги
+# Упражнения из книги
 В терминале “ksql>” запустим
 ```
 PRINT `titles` FROM BEGINNING ;
