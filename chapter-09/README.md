@@ -147,9 +147,7 @@ docker-compose down
 - ksqldb-server на порту 8088. Сервер ksqldb. В идеале должен запуститься run.sh из ./files/ksqldb-server, который создаст плагины для коннекторов. Если не сработает или запуститься раньше времени, придется запускать его потом из контейнера.
 
 - ksqldb-cli - клиент базы. Можно включить с помощью команды:
-
-```docker-compose exec ksqldb-cli  ksql http://ksqldb-server:8088
-```
+    ```docker-compose exec ksqldb-cli  ksql http://ksqldb-server:8088```
     Файл ./files/ksqldb-cli/all.sql копируется в /etc/sql контейнера и запускается, создавая два коннектора. Если не сработает, запустим позже из контейнера.
 schema-registry - схемы данных будем хранить здесь. Порт 8081 и 31002
 
