@@ -1,0 +1,59 @@
+docker-compose exec ksqldb-server /bin/bash
+
+confluent-hub install confluentinc/kafka-connect-jdbc:10.0.0 \
+--component-dir /home/appuser/ \
+--worker-configs /etc/ksqldb-server/connect.properties \
+--no-prompt
+
+confluent-hub install confluentinc/kafka-connect-elasticsearch:10.0.2 \
+--component-dir /home/appuser/ \
+--worker-configs /etc/ksqldb-server/connect.properties \
+--no-prompt
+
+docker-compose restart ksqldb-server
+
+start_ksqldb.sh
+
+ksql>
+CREATE SOURCE CONNECTOR `postgres-source` WITH(
+"connector.class"='io.confluent.connect.jdbc.JdbcSourceConnector', 
+"connection.url"=
+'jdbc:postgresql://postgres:5432/root?user=root&password=secret', 
+"mode"='incrementing', 
+"incrementing.column.name"='id', 
+"topic.prefix"='', 
+"table.whitelist"='titles', 
+"key"='id')
+
+CREATE SINK CONNECTOR `elasticsearch-sink` WITH(
+"connector.class"=
+'io.confluent.connect.elasticsearch.ElasticsearchSinkConnector',
+"connection.url"='http://elasticsearch:9200',
+"connection.username"='',
+"connection.password"='',
+"batch.size"='1',
+"write.method"='insert',
+"topics"='titles',
+"type.name"='changes',
+"key"='title_id');
+
+Дополнительно
+DESCRIBE CONNECTOR `postgres-source`;
+SHOW CONNECTORS;
+DROP CONNECTOR `postgres-source` ;
+
+Прямой доступ:
+docker-compose exec ksqldb-server /bin/bash
+
+Получение списка коннекторов curl -XGET localhost:8083/connectors
+Получение описаний коннекторов curl -XGET localhost:8083/connectors/elasticsearch-sink
+Получение списка задач curl -XGET -s localhost:8083/connectors/elasticsearch-sink/tasks
+Получение состояний задач curl -XGET -s localhost:8083/connectors/elasticsearch-sink/tasks/0/status
+Перезапуск задачи curl -XPOST -s localhost:8083/connectors/elasticsearch-sink/tasks/0/restart
+
+Схемы:
+docker-compose exec schema-registry /bin/bash
+Получение схемы типов curl -XGET localhost:8081/subjects/
+Получение списка версий схемы curl -XGET localhost:8081/subjects/titles-value/versions
+Получение схемы с указанной версией curl -XGET localhost:8081/subjects/titles-value/versions/1
+Получение схемы последней версии curl -XGET localhost:8081/subjects/titles-value/versions/latest
